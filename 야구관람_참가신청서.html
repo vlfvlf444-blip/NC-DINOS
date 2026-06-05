@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 단체 야구 경기 관람 희망 조사</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --color-primary: #C8102E;
+    --color-primary-dark: #9B0B22;
+    --color-primary-light: rgba(200,16,46,0.12);
+    --color-bg: #0B1F4B;
+    --color-bg-secondary: #112260;
+    --color-bg-card: #0e2458;
+    --color-text: #F0F4FF;
+    --color-text-secondary: #9BADD4;
+    --color-border: rgba(255,255,255,0.12);
+    --color-border-hover: rgba(255,255,255,0.25);
+    --color-danger: #ff6b6b;
+    --color-gold: #E8B84B;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --font: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+  }
+  body {
+    font-family: var(--font);
+    font-size: 15px;
+    color: var(--color-text);
+    background:
+      radial-gradient(ellipse at 20% 0%, rgba(200,16,46,0.18) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 100%, rgba(232,184,75,0.10) 0%, transparent 50%),
+      linear-gradient(160deg, #0B1F4B 0%, #071535 60%, #0a1a42 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    padding: 0;
+  }
+  .page-wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+  /* top banner */
+  .nc-banner {
+    background: linear-gradient(90deg, #C8102E 0%, #9B0B22 100%);
+    color: #fff;
+    text-align: center;
+    padding: 7px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    font-family: var(--font);
+  }
+  .header {
+    border-left: 3px solid var(--color-gold);
+    padding-left: 14px;
+    margin-bottom: 1.75rem;
+  }
+  .header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header p {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+  .notice {
+    background: var(--color-bg-secondary);
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    margin-bottom: 1.75rem;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+  .notice strong { color: var(--color-text); font-weight: 500; }
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 1.75rem;
+  }
+  .stat {
+    background: var(--color-bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-val { font-size: 22px; font-weight: 600; color: var(--color-gold); }
+  .stat-lbl { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+  .entries-wrap { margin-bottom: 0.5rem; }
+  .empty-msg {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    text-align: center;
+    padding: 24px 0;
+  }
+  .entry-card {
+    border: 0.5px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 12px;
+    position: relative;
+    background: var(--color-bg-card);
+  }
+  .entry-num {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-gold);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .btn-remove {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    font-size: 18px;
+    line-height: 1;
+    padding: 3px 5px;
+    border-radius: 6px;
+  }
+  .btn-remove:hover { color: var(--color-danger); background: var(--color-bg-secondary); }
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .form-grid.single { grid-template-columns: 1fr; margin-bottom: 0; }
+  .field label {
+    display: block;
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 5px;
+    font-weight: 500;
+  }
+  .field label .req { color: var(--color-danger); margin-left: 2px; }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    border: 0.5px solid var(--color-border-hover);
+    border-radius: var(--radius-md);
+    padding: 8px 10px;
+    font-size: 14px;
+    background: rgba(255,255,255,0.07);
+    color: var(--color-text);
+    font-family: var(--font);
+    transition: border-color .15s, box-shadow .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(200,16,46,0.25);
+  }
+  .field textarea { resize: vertical; min-height: 56px; }
+  .type-btn-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
+  .type-btn {
+    padding: 6px 12px;
+    border: 0.5px solid var(--color-border-hover);
+    border-radius: 20px;
+    background: transparent;
+    font-size: 13px;
+    cursor: pointer;
+    color: var(--color-text-secondary);
+    font-family: var(--font);
+    transition: all .15s;
+  }
+  .type-btn.active {
+    background: var(--color-primary-light);
+    border-color: var(--color-primary);
+    color: var(--color-primary-dark);
+    font-weight: 500;
+  }
+  .btn-add {
+    width: 100%;
+    padding: 11px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, #C8102E 0%, #9B0B22 100%);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-bottom: 1.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: var(--font);
+    transition: all .15s;
+  }
+  .btn-add:hover { background: linear-gradient(135deg, #9B0B22 0%, #7a0919 100%); color: #fff; }
+  .consent-box {
+    border: 0.5px solid var(--color-border-hover);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    margin-bottom: 1.75rem;
+    background: var(--color-bg-secondary);
+  }
+  .consent-title {
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 10px;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .consent-title i { color: var(--color-primary); font-size: 16px; }
+  .consent-text {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    line-height: 1.75;
+    margin-bottom: 14px;
+    border-bottom: 0.5px solid var(--color-border);
+    padding-bottom: 12px;
+  }
+  .consent-text strong { color: var(--color-text); font-weight: 500; }
+  .consent-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    color: var(--color-text);
+  }
+  .consent-check input[type=checkbox] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-gold);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .actions {
+    display: flex;
+    gap: 10px;
+  }
+  .btn-submit {
+    flex: 2;
+    padding: 12px;
+    background: linear-gradient(135deg, #C8102E 0%, #9B0B22 100%);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: background .15s;
+  }
+  .btn-submit:hover { background: linear-gradient(135deg, #9B0B22 0%, #7a0919 100%); }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2C2C2A;
+    color: #fff;
+    padding: 10px 22px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity .3s;
+    pointer-events: none;
+    z-index: 9999;
+    white-space: nowrap;
+  }
+  .toast.show { opacity: 1; }
+  @media (max-width: 540px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .stat-row { grid-template-columns: repeat(3, 1fr); }
+    .actions { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+<div class="nc-banner">⚾ NC 다이노스 · 창원 NC파크 단체 관람 희망 조사 ⚾</div>
+<div class="page-wrap">
+
+  <div class="header">
+    <h1><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 100 100" style="display:inline-block;vertical-align:-6px;margin-right:6px">
+  <defs>
+    <radialGradient id="ballGrad" cx="38%" cy="35%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e8e0d0"/>
+    </radialGradient>
+    <clipPath id="ballClip"><circle cx="50" cy="50" r="47"/></clipPath>
+  </defs>
+  <!-- ball -->
+  <circle cx="50" cy="50" r="47" fill="url(#ballGrad)" stroke="#c8bfaa" stroke-width="1.5"/>
+  <!-- left seam curve -->
+  <path d="M 30 10 C 10 30, 10 70, 30 90" fill="none" stroke="#C8102E" stroke-width="3.5" stroke-linecap="round" clip-path="url(#ballClip)"/>
+  <!-- right seam curve -->
+  <path d="M 70 10 C 90 30, 90 70, 70 90" fill="none" stroke="#C8102E" stroke-width="3.5" stroke-linecap="round" clip-path="url(#ballClip)"/>
+  <!-- left seam stitches -->
+  <g stroke="#C8102E" stroke-width="2" stroke-linecap="round" clip-path="url(#ballClip)">
+    <line x1="22" y1="22" x2="30" y2="26"/>
+    <line x1="17" y1="33" x2="26" y2="35"/>
+    <line x1="14" y1="45" x2="23" y2="46"/>
+    <line x1="14" y1="55" x2="23" y2="54"/>
+    <line x1="17" y1="67" x2="26" y2="65"/>
+    <line x1="22" y1="78" x2="30" y2="74"/>
+  </g>
+  <!-- right seam stitches -->
+  <g stroke="#C8102E" stroke-width="2" stroke-linecap="round" clip-path="url(#ballClip)">
+    <line x1="78" y1="22" x2="70" y2="26"/>
+    <line x1="83" y1="33" x2="74" y2="35"/>
+    <line x1="86" y1="45" x2="77" y2="46"/>
+    <line x1="86" y1="55" x2="77" y2="54"/>
+    <line x1="83" y1="67" x2="74" y2="65"/>
+    <line x1="78" y1="78" x2="70" y2="74"/>
+  </g>
+</svg>2026 단체 야구 경기 관람 희망 조사</h1>
+  </div>
+
+  <div class="notice">
+    신어중학교 학생들의 체험학습 기회를 제공하기 위해 야구 경기 지원 사업을 신청하고자 합니다.<br>
+    <span style="font-size:12px">단, 신청 학교가 많으면 미선정 될 수도 있습니다.</span>
+  </div>
+
+  <div class="notice" style="margin-bottom:1.25rem">
+    <strong>1. 경기 일자:</strong> 미정(6월 ~ 창원 NC파크 경기 종료일)<br>
+    <strong>2. 시간:</strong> 오후 6시 30분(경기종료 예상시간 9시 30분)<br>
+    <strong>3. 장소:</strong> 창원 NC파크<br>
+    <strong>4. 교통:</strong> 전세버스 이용<br>
+    <strong>5. 지원대상:</strong> 전체 학생<br>
+    <strong>6. 신청대상:</strong> 전교생<br>
+    <span style="color:var(--color-gold)">※ 자세한 경기 일자는 교육청, 구단과 조율 후 확정됩니다. 반드시 관람을 희망하는 학생만 신청 바랍니다.</span><br><br>
+    <div style="border:2px solid var(--color-gold);border-radius:8px;padding:12px 16px;margin-bottom:12px;background:rgba(232,184,75,0.08);color:var(--color-gold);font-size:14px;line-height:2">
+      <strong>💰 관람비</strong>는 교육청 지원<br>
+      <strong>🚌 교통비·여행자 보험료</strong>는 학교 자체 예산으로 지원<br>
+      <strong>🍱 식비 및 간식비</strong>는 본인 부담
+    </div>
+    개인정보 수집·이용 동의 후 제출 바랍니다.
+  </div>
+
+  <div id="entriesWrap" class="entries-wrap">
+    <p class="empty-msg">아래 버튼을 눌러 신청서를 작성하세요.</p>
+  </div>
+
+  <button class="btn-add" onclick="addEntry()">
+    <i class="ti ti-plus"></i> 신청서 작성
+  </button>
+
+  <div class="consent-box">
+    <div class="consent-title">
+      <i class="ti ti-shield-check"></i> 개인정보 수집·이용 동의
+    </div>
+    <div class="consent-text">
+      경상남도교육청(신어중학교)은 「2026 야구 경기 관람 지원 사업」 운영을 위해 아래와 같이 개인정보를 수집·이용합니다.<br><br>
+      <strong>수집 항목:</strong> 학생 성명, 학년·반, 보호자 연락처, 인솔 교직원 정보<br>
+      <strong>수집 목적:</strong> 창원NC파크 단체 관람 신청, 안전 관리, 예산 교부 및 결과 제출<br>
+      <strong>보유 기간:</strong> 사업 종료 후 5년 보관 후 파기<br><br>
+      본 동의서를 제출하는 것으로 위 사항에 동의한 것으로 간주합니다.<br>
+      동의를 거부할 수 있으나, 거부 시 사업 참가가 제한될 수 있습니다.
+    </div>
+    <label class="consent-check">
+      <input type="checkbox" id="consentCheck">
+      위 개인정보 수집·이용에 동의합니다.
+    </label>
+  </div>
+
+  <div class="actions">
+    <button class="btn-submit" onclick="submitAll()">
+      <i class="ti ti-check"></i> 신청완료
+    </button>
+  </div>
+
+  <!-- 히든 관리자 로그인: 하단 우측 작은 점 클릭 -->
+  <div style="text-align:right;margin-top:2rem">
+    <span id="adminDot" onclick="toggleAdminLogin()" style="display:inline-block;width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.08);cursor:pointer;" title=""></span>
+  </div>
+
+  <!-- 관리자 로그인 패널 -->
+  <div id="adminPanel" style="display:none;margin-top:0.5rem;background:rgba(255,255,255,0.05);border:1px solid var(--color-gold);border-radius:var(--radius-md);padding:14px 16px">
+    <div style="font-size:13px;color:var(--color-gold);margin-bottom:10px;font-weight:500"><i class="ti ti-lock"></i> 관리자 로그인</div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <input id="adminPwInput" type="password" placeholder="비밀번호 입력" style="flex:1;border:0.5px solid var(--color-border-hover);border-radius:var(--radius-md);padding:8px 10px;font-size:14px;background:rgba(255,255,255,0.07);color:var(--color-text);font-family:var(--font)" onkeydown="if(event.key==='Enter')adminLogin()">
+      <button onclick="adminLogin()" style="padding:8px 16px;background:var(--color-gold);color:#0B1F4B;border:none;border-radius:var(--radius-md);font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)">확인</button>
+    </div>
+    <div id="adminMsg" style="font-size:12px;color:var(--color-danger);margin-top:6px;display:none">비밀번호가 틀렸습니다.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5xamcv53Ey9vltgS3tj3gEZKvTHXEqNxgprPmo28VhNf566I6ZndKaKTA3e_2YtWE_g/exec';
+  let entries = [];
+  let entryId = 0;
+  let alreadySubmitted = localStorage.getItem('baseball_submitted') === 'true';
+
+  // 이미 신청한 경우 UI 잠금
+  window.addEventListener('DOMContentLoaded', () => {
+    if (alreadySubmitted) lockSubmitted();
+  });
+
+  function lockSubmitted() {
+    document.getElementById('entriesWrap').innerHTML = '<p class="empty-msg" style="color:var(--color-gold);padding:30px 0">✅ 이미 신청이 완료되었습니다.<br><span style=\"font-size:12px;color:var(--color-text-secondary)\">중복 신청은 불가합니다.</span></p>';
+    const addBtn = document.querySelector('.btn-add');
+    if (addBtn) { addBtn.disabled = true; addBtn.style.opacity = '0.4'; addBtn.style.cursor = 'not-allowed'; }
+    const submitBtn = document.querySelector('.btn-submit');
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.style.opacity = '0.4'; submitBtn.style.cursor = 'not-allowed'; }
+    const consentBox = document.querySelector('.consent-box');
+    if (consentBox) consentBox.style.opacity = '0.4';
+  }
+  function addEntry() {
+    if (entries.length > 0) return;
+    const id = ++entryId;
+    entries.push({ id, name: '', studentId: '', contact: '', note: '' });
+    render();
+  }
+
+  function removeEntry(id) {
+    entries = entries.filter(e => e.id !== id);
+    render();
+  }
+
+  function updateField(id, field, val) {
+    const e = entries.find(x => x.id === id);
+    if (e) e[field] = val;
+    updateStats();
+  }
+
+  function render() {
+    const wrap = document.getElementById('entriesWrap');
+    if (entries.length === 0) {
+      wrap.innerHTML = '<p class="empty-msg">아래 버튼을 눌러 신청서를 작성하세요.</p>';
+      updateStats();
+      return;
+    }
+    wrap.innerHTML = entries.map((e, i) => `
+      <div class="entry-card">
+        <button class="btn-remove" onclick="removeEntry(${e.id})" title="삭제"><i class="ti ti-x"></i></button>
+        <div class="form-grid">
+          <div class="field">
+            <label>학생 성명<span class="req">*</span></label>
+            <input type="text" value="${e.name}" oninput="updateField(${e.id},'name',this.value)" placeholder="홍길동">
+          </div>
+          <div class="field">
+            <label>학번<span class="req">*</span></label>
+            <input type="text" value="${e.studentId}" oninput="updateField(${e.id},'studentId',this.value)" placeholder="예: 3126">
+          </div>
+          <div class="field">
+            <label>보호자 연락처<span class="req">*</span></label>
+            <input type="tel" value="${e.contact}" oninput="updateField(${e.id},'contact',this.value)" placeholder="010-0000-0000">
+          </div>
+
+
+        </div>
+        <div class="form-grid single">
+          <div class="field">
+            <label>비고</label>
+            <input type="text" value="${e.note}" oninput="updateField(${e.id},'note',this.value)" placeholder="추가 사항 입력">
+          </div>
+        </div>
+      </div>
+    `).join('');
+    updateStats();
+  }
+
+  function updateStats() {}
+
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2800);
+  }
+
+
+  async function submitAll() {
+    if (alreadySubmitted) { showToast('이미 신청이 완료되었습니다.'); return; }
+    if (!document.getElementById('consentCheck').checked) {
+      showToast('개인정보 동의에 체크해 주세요.'); return;
+    }
+    if (entries.length === 0) {
+      showToast('신청서를 작성해 주세요.'); return;
+    }
+    const missing = entries.find(e => !e.name || !e.studentId || !e.contact);
+    if (missing) {
+      showToast('성명, 학번, 연락처는 필수 입력 항목입니다.'); return;
+    }
+
+    const submitBtn = document.querySelector('.btn-submit');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="ti ti-loader"></i> 제출 중...';
+
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entries: entries.map(e => ({ name: e.name, studentId: e.studentId, contact: e.contact, note: e.note })) })
+      });
+
+      // no-cors 모드에서는 응답 확인 불가, 성공으로 간주
+      localStorage.setItem('baseball_submitted', 'true');
+      alreadySubmitted = true;
+      showToast('신청이 완료되었습니다! ✓');
+      setTimeout(() => lockSubmitted(), 1000);
+    } catch (err) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = '<i class="ti ti-check"></i> 신청완료';
+      showToast('오류가 발생했습니다. 다시 시도해 주세요.');
+    }
+  }
+
+
+
+</script>
+</body>
+</html>
