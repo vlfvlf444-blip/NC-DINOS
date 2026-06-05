@@ -433,18 +433,25 @@
     updateStats();
   }
 
-  function selectStudent(id, studentId) {
+  function validateName(id, val) {
     const e = entries.find(x => x.id === id);
     if (!e) return;
-    const s = STUDENTS.find(x => x.id === studentId);
-    if (s) {
-      e.name = s.name;
-      e.studentId = s.id;
-      const sidEl = document.getElementById('sid_' + id);
-      if (sidEl) sidEl.value = s.id;
-    } else {
-      e.name = '';
+    e.name = val;
+    const s = STUDENTS.find(x => x.name === val.trim());
+    const msgEl = document.getElementById('nameMsg_' + id);
+    const sidEl = document.getElementById('sid_' + id);
+    if (val.trim() === '') {
       e.studentId = '';
+      if (sidEl) sidEl.value = '';
+      if (msgEl) msgEl.style.display = 'none';
+    } else if (s) {
+      e.studentId = s.id;
+      if (sidEl) sidEl.value = s.id;
+      if (msgEl) msgEl.style.display = 'none';
+    } else {
+      e.studentId = '';
+      if (sidEl) sidEl.value = '';
+      if (msgEl) msgEl.style.display = 'block';
     }
   }
 
@@ -461,11 +468,12 @@
         <div class="form-grid">
           <div class="field">
             <label>학생 성명<span class="req">*</span></label>
-            <input type="text" value="${e.name}" oninput="updateField(${e.id},'name',this.value)" placeholder="홍길동">
+            <input type="text" value="${e.name}" oninput="validateName(${e.id}, this.value)" placeholder="홍길동">
+            <div id="nameMsg_${e.id}" style="font-size:11px;margin-top:4px;display:none;color:var(--color-danger)">본교 학생이 아닙니다.</div>
           </div>
           <div class="field">
-            <label>학번<span class="req">*</span></label>
-            <input type="text" value="${e.studentId}" oninput="updateField(${e.id},'studentId',this.value)" placeholder="예: 3126">
+            <label>학번</label>
+            <input type="text" id="sid_${e.id}" value="${e.studentId}" readonly placeholder="자동 입력" style="width:100%;border:0.5px solid var(--color-border-hover);border-radius:var(--radius-md);padding:8px 10px;font-size:14px;background:rgba(255,255,255,0.04);color:var(--color-text-secondary);font-family:var(--font);cursor:not-allowed">
           </div>
           <div class="field">
             <label>보호자 연락처<span class="req">*</span></label>
@@ -503,9 +511,9 @@
     if (entries.length === 0) {
       showToast('신청서를 작성해 주세요.'); return;
     }
-    const missing = entries.find(e => !e.studentId || !e.contact);
+    const missing = entries.find(e => !e.name || !e.studentId || !e.contact);
     if (missing) {
-      showToast('학생 이름과 보호자 연락처를 입력해 주세요.'); return;
+      showToast('이름(명단 확인), 보호자 연락처를 입력해 주세요.'); return;
     }
 
     const submitBtn = document.querySelector('.btn-submit');
